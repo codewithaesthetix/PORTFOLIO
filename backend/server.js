@@ -4,17 +4,17 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/projects')
+// MongoDB
+const MONGO_URI = process.env.MONGO_URI || 'your-mongodb-atlas-uri-here';
+
+mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Contact schema & model
+// Schema
 const ContactSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -23,42 +23,35 @@ const ContactSchema = new mongoose.Schema({
 
 const Contact = mongoose.model('Contact', ContactSchema);
 
-// Configure Nodemailer with app password
+// Mailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'kazamali562@gmail.com',
-    pass: 'wedm tiyk rmzt boxh' // Replace with actual app password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
-// Contact API route
 app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
-    // Save to MongoDB
     const newContact = new Contact({ name, email, message });
     await newContact.save();
 
-    // Send email
     const mailOptions = {
-      from: 'kazamali562@gmail.com',
-      to: 'kazamali562@gmail.com',
-      subject: 'New Contact Form Message',
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: 'New Contact Message',
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
     };
 
     await transporter.sendMail(mailOptions);
-    res.json({ success: true, message: 'Message saved and email sent' });
+    res.json({ success: true, message: 'Message saved & email sent!' });
   } catch (err) {
     console.error('Error:', err);
     res.status(500).json({ success: false, message: 'Failed to send message' });
   }
 });
 
-// Start server
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+module.exports = app;

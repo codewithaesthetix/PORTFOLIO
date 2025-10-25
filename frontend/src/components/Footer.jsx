@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { SiGithub, SiLinkedin, SiX, SiFiverr, SiGmail, SiWhatsapp } from 'react-icons/si';
 import { FiHeart, FiExternalLink } from 'react-icons/fi';
-import loImage from './logo.jpg';
+import loImage from './logo.png';
 
 const Footer = ({ darkMode }) => {
   const currentYear = new Date().getFullYear();

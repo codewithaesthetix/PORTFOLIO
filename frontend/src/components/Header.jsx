@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineSun, HiOutlineMoon } from 'react-icons/hi';
-import Image from './logo.jpg'; 
+import Image from './logo.png'; 
 
 
 const Header = ({ darkMode, toggleDarkMode, activeSection, setActiveSection }) => {
